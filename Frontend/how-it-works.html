@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How It Works - DeepfakeDetection</title>
+    <meta name="description" content="Explore how our EfficientNet-B0 deep learning pipeline detects synthetic facial manipulations and deepfakes in under 2 seconds.">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Outfit:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .hiw-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hiw-main {
+            flex: 1;
+            padding: 100px 20px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            text-align: center;
+        }
+
+        .hiw-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(127, 0, 255, 0.1);
+            border: 1px solid rgba(127, 0, 255, 0.3);
+            color: #a78bfa;
+            border-radius: 50px;
+            padding: 8px 22px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .hiw-title {
+            font-size: 44px;
+            background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 70%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+        }
+
+        .hiw-subtitle {
+            color: #94a3b8;
+            font-size: 16px;
+            max-width: 680px;
+            margin: 0 auto 50px;
+            line-height: 1.7;
+        }
+
+        .hiw-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 30px;
+            align-items: center;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .hiw-column {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .hiw-step {
+            background: rgba(13, 20, 32, 0.75);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 34px 26px;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .hiw-step:hover {
+            border-color: rgba(0, 242, 254, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 242, 254, 0.1);
+        }
+
+        .hiw-step-num {
+            font-family: var(--font-tech);
+            font-size: 13px;
+            color: rgba(0, 242, 254, 0.6);
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .hiw-step-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            background: rgba(0, 242, 254, 0.06);
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-cyan);
+            margin: 0 auto 16px;
+            transition: var(--transition-smooth);
+        }
+
+        .hiw-step:hover .hiw-step-icon {
+            background: var(--accent-gradient);
+            color: #06090e;
+            transform: scale(1.1);
+        }
+
+        .hiw-step h3 {
+            font-size: 17px;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .hiw-step p {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .hiw-connector {
+            display: flex;
+            align-items: center;
+            color: rgba(0, 242, 254, 0.35);
+        }
+
+        /* Demo Video Block */
+        .hiw-demo-wrap {
+            width: 100%;
+        }
+
+        .hiw-demo-label {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-cyan);
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .hiw-demo-timeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .timeline-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .tl-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .tl-dot.input { background: var(--accent-blue); box-shadow: 0 0 8px rgba(79, 172, 254, 0.5); }
+        .tl-dot.process { background: #a78bfa; box-shadow: 0 0 8px rgba(167, 139, 250, 0.5); }
+        .tl-dot.output { background: var(--color-real); box-shadow: 0 0 8px rgba(0, 255, 102, 0.5); }
+
+        .tl-text small { color: #64748b; font-size: 11px; }
+        .tl-arrow { color: rgba(255, 255, 255, 0.2); font-size: 18px; }
+
+        .hiw-video-player {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 */
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            box-shadow: 0 0 40px rgba(0, 242, 254, 0.08), 0 20px 60px rgba(0, 0, 0, 0.5);
+            background: #000;
+        }
+
+        .hiw-video-player iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Technical Pipeline Section */
+        .tech-pipeline-section {
+            margin-top: 80px;
+            text-align: left;
+            background: rgba(13, 20, 32, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 20px;
+            padding: 45px;
+        }
+
+        .tech-pipeline-section h3 {
+            font-size: 24px;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .tech-pipeline-section p {
+            color: #94a3b8;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .pipeline-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .pipeline-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 24px;
+            transition: var(--transition-smooth);
+        }
+
+        .pipeline-card:hover {
+            border-color: rgba(0, 242, 254, 0.25);
+            transform: translateY(-4px);
+        }
+
+        .pipeline-card h4 {
+            font-size: 16px;
+            color: var(--accent-cyan);
+            margin-bottom: 8px;
+        }
+
+        .pipeline-card p {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 0;
+            line-height: 1.55;
+        }
+
+        .cta-bottom {
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .hiw-layout { grid-template-columns: 1fr; }
+            .hiw-connector { transform: rotate(90deg); margin: 0; }
+            .pipeline-grid { grid-template-columns: 1fr; }
+            .hiw-title { font-size: 32px; }
+            .tech-pipeline-section { padding: 25px; }
+        }
+    </style>
+</head>
+<body class="hiw-page">
+
+    <!-- Premium Navigation Bar -->
+    <nav class="navbar" id="mainNav">
+        <div class="logo-container">
+            <img src="image/logo.png" alt="DeepFake Logo" onerror="this.src='https://img.icons8.com/nolan/96/artificial-intelligence.png'">
+            <div class="logo-text">DeepfakeDetection</div>
+        </div>
+        <div class="burger" onclick="toggleMenu()">
+            <div></div><div></div><div></div>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="how-it-works.html" class="active">How It Works</a>
+            <a href="workspace.html">Workspace</a>
+            <a href="about.html">About</a>
+            <a href="faq.html">FAQ</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="hiw-main">
+        <div class="hiw-badge reveal-on-scroll">
+            <i data-lucide="cpu"></i> Neural Processing Pipeline
+        </div>
+        <h1 class="hiw-title reveal-on-scroll">How DeepfakeDetection Works</h1>
+        <p class="hiw-subtitle reveal-on-scroll">
+            Our multi-stage forensics pipeline analyzes pixel gradients, high-frequency residual noise, and facial landmarks using fine-tuned EfficientNet-B0 deep learning models.
+        </p>
+
+        <!-- 4-Step Interactive Layout with Embedded Demo -->
+        <div class="hiw-layout">
+            <div class="hiw-column">
+                <div class="hiw-step reveal-on-scroll">
+                    <div class="hiw-step-num">Step 01</div>
+                    <div class="hiw-step-icon"><i data-lucide="upload-cloud"></i></div>
+                    <h3>Upload Media</h3>
+                    <p>Drag & drop or select any portrait face image (PNG, JPG, JPEG, WEBP up to 10MB).</p>
+                </div>
+                <div class="hiw-connector reveal-on-scroll" style="transform: rotate(90deg);">
+                    <i data-lucide="arrow-right"></i>
+                </div>
+                <div class="hiw-step reveal-on-scroll">
+                    <div class="hiw-step-num">Step 02</div>
+                    <div class="hiw-step-icon"><i data-lucide="scan-face"></i></div>
+                    <h3>AI Processing</h3>
+                    <p>EfficientNet-B0 scans 224×224 normalized tensors, pixel consistency, and frequency distributions.</p>
+                </div>
+            </div>
+
+            <div class="hiw-column" style="width: 100%;">
+                <div class="hiw-demo-wrap reveal-on-scroll">
+                    <div class="hiw-demo-label">📽️ Interactive Live Demo Player</div>
+
+                    <div class="hiw-demo-timeline">
+                        <div class="timeline-step">
+                            <span class="tl-dot input"></span>
+                            <span class="tl-text">Input<br><small>Upload Image</small></span>
+                        </div>
+                        <div class="tl-arrow">→</div>
+                        <div class="timeline-step">
+                            <span class="tl-dot process"></span>
+                            <span class="tl-text">Processing<br><small>EfficientNet AI</small></span>
+                        </div>
+                        <div class="tl-arrow">→</div>
+                        <div class="timeline-step">
+                            <span class="tl-dot output"></span>
+                            <span class="tl-text">Output<br><small>Verdict + Report</small></span>
+                        </div>
+                    </div>
+
+                    <div class="hiw-video-player">
+                        <iframe loading="lazy" src="demo_animation.html" title="DeepfakeDetection — Step by Step Demo" frameborder="0" scrolling="no"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hiw-column">
+                <div class="hiw-step reveal-on-scroll">
+                    <div class="hiw-step-num">Step 03</div>
+                    <div class="hiw-step-icon"><i data-lucide="bar-chart-2"></i></div>
+                    <h3>Analysis Report</h3>
+                    <p>Calculates confidence scores, real vs. fake probability bars, and FFT spectral statistics.</p>
+                </div>
+                <div class="hiw-connector reveal-on-scroll" style="transform: rotate(90deg);">
+                    <i data-lucide="arrow-right"></i>
+                </div>
+                <div class="hiw-step reveal-on-scroll">
+                    <div class="hiw-step-num">Step 04</div>
+                    <div class="hiw-step-icon"><i data-lucide="shield-check"></i></div>
+                    <h3>Verdict</h3>
+                    <p>Provides an AUTHENTIC or MANIPULATED diagnosis with dynamic forensic observations.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Deep-Dive Grid -->
+        <section class="tech-pipeline-section reveal-on-scroll">
+            <h3>🔬 Deep-Dive: The Forensic Methodology</h3>
+            <p>Our detection framework combines spatial feature representations with frequency-domain residual analysis to catch generative artifacts left behind by Diffusion models, GANs, and face-swapping engines.</p>
+            
+            <div class="pipeline-grid">
+                <div class="pipeline-card">
+                    <h4>1. Preprocessing & Normalization</h4>
+                    <p>Uploaded images are securely converted to RGB, resized to 224×224 pixels, and normalized using standard ImageNet parameters ([0.485, 0.456, 0.406]).</p>
+                </div>
+                <div class="pipeline-card">
+                    <h4>2. EfficientNet-B0 Inference</h4>
+                    <p>Mobile Inverted Bottleneck convolutions (MBConv) with Squeeze-and-Excitation attention extract multi-scale spatial features with high parameter efficiency.</p>
+                </div>
+                <div class="pipeline-card">
+                    <h4>3. Calibrated Thresholding</h4>
+                    <p>Softmax probabilities are evaluated against an optimized decision threshold determined during validation to maximize balanced F1-score accuracy.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Bottom -->
+        <div class="cta-bottom reveal-on-scroll">
+            <a href="workspace.html" class="btn-primary" style="font-size: 16px; padding: 16px 40px;">
+                <i data-lucide="binary"></i> Test an Image in AI Workspace
+            </a>
+        </div>
+    </main>
+
+    <!-- Premium Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 <strong>DeepfakeDetection</strong>. All Rights Reserved. ❤️</p>
+            <p>Empowering digital networks with high-fidelity deepfake analysis.</p>
+        </div>
+    </footer>
+
+        <!-- Lucide Icons & Javascript -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        function initLucide() {
+            if (window.lucide && typeof lucide.createIcons === 'function') {
+                lucide.createIcons();
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initLucide);
+        } else {
+            initLucide();
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

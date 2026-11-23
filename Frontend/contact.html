@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - DeepfakeDetection</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Outfit:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- EmailJS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
+
+    <style>
+        .contact-section {
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Premium Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="image/logo.png" alt="DeepFake Logo" onerror="this.src='https://img.icons8.com/nolan/96/artificial-intelligence.png'">
+            <div class="logo-text">DeepfakeDetection</div>
+        </div>
+        <div class="burger" onclick="toggleMenu()">
+            <div></div><div></div><div></div>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="workspace.html">Workspace</a>
+            <a href="about.html">About</a>
+            <a href="faq.html">FAQ</a>
+            <a href="contact.html" class="active">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Main Contact Section -->
+    <section class="contact-section">
+        <div class="contact-card glass-card reveal-on-scroll">
+            <h2 style="font-size: 32px; background: linear-gradient(135deg, #ffffff, var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">
+                Contact Our Team
+            </h2>
+            <p style="color: #94a3b8; font-size: 14.5px;">Have technical inquiries, integration questions, or model feedback? Reach out to us.</p>
+
+            <form id="contactForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="userName">Name</label>
+                        <input type="text" id="userName" required placeholder="Enter the Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Email Address</label>
+                        <input type="email" id="userEmail" required placeholder="Enter the Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="userMsg">Message</label>
+                        <textarea id="userMsg" rows="5" required placeholder="Write your inquiry here..."></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-primary" style="margin-top: 25px; width: 100%; justify-content: center;">
+                    <i data-lucide="send"></i> Dispatch Message
+                </button>
+            </form>
+
+            <!-- Success Feedback -->
+            <div class="form-success-msg" id="formSuccessMsg" style="display:none;">
+                <i data-lucide="check-circle" style="width: 24px; height: 24px;"></i>
+                <span>Transmission Received! Our team will respond shortly.</span>
+            </div>
+
+            <!-- Error Feedback -->
+            <div id="formErrorMsg" style="display:none; color:#f87171; margin-top:15px; text-align:center;">
+                <span>Something went wrong. Please try again.</span>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Premium Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 <strong>DeepfakeDetection</strong>. All Rights Reserved. ❤️</p>
+            <p>Empowering digital networks with high-fidelity deepfake analysis.</p>
+        </div>
+    </footer>
+
+        <!-- Lucide Icons & Javascript -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        function initLucide() {
+            if (window.lucide && typeof lucide.createIcons === 'function') {
+                lucide.createIcons();
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initLucide);
+        } else {
+            initLucide();
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

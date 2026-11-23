@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Interactive Gantt Timeline - DeepfakeDetection FYP</title>
+    <meta name="description" content="Interactive 3D Isometric Gantt Timeline for Deepfake Detection FYP Development Schedule.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Outfit:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Three.js and OrbitControls for 3D Rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #060913;
+            font-family: 'Space Grotesk', sans-serif;
+            color: #f8fafc;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Top HUD Header */
+        .hud-header {
+            position: absolute;
+            top: 20px;
+            left: 25px;
+            z-index: 10;
+            background: rgba(13, 20, 38, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 16px;
+            padding: 18px 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 254, 0.15);
+            max-width: 480px;
+            pointer-events: auto;
+        }
+
+        .hud-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            margin: 0 0 6px 0;
+            background: linear-gradient(135deg, #00f2fe, #4facfe, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .hud-header p {
+            margin: 0;
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        /* Controls Panel */
+        .hud-controls {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            z-index: 10;
+            background: rgba(13, 20, 38, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 14px 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .hud-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            color: #f8fafc;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hud-btn:hover {
+            background: rgba(0, 242, 254, 0.2);
+            border-color: #00f2fe;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Top Right Navigation */
+        .hud-nav {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            z-index: 10;
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Phase Info Card on Click/Hover */
+        .hud-info-card {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            z-index: 10;
+            background: rgba(13, 20, 38, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            border-radius: 16px;
+            padding: 20px 26px;
+            max-width: 360px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(168, 85, 247, 0.2);
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+
+        .hud-info-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            color: #00f2fe;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .hud-info-card .phase-timeline {
+            font-size: 12px;
+            color: #a855f7;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hud-info-card p {
+            margin: 0 0 10px 0;
+            font-size: 13.5px;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .hud-info-card .status-pill {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #34d399;
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* 3D Tooltip */
+        #tooltip {
+            position: absolute;
+            z-index: 20;
+            background: rgba(8, 14, 28, 0.9);
+            border: 1px solid #00f2fe;
+            color: #ffffff;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            pointer-events: none;
+            display: none;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+    <div id="tooltip"></div>
+
+    <!-- HUD Header -->
+    <div class="hud-header">
+        <h1>3D Deepfake FYP Gantt Timeline</h1>
+        <p>Interactive 3D isometric schedule visualization. Rotate (Left-Click Drag), Pan (Right-Click Drag), Zoom (Scroll), or click any phase block to inspect details.</p>
+    </div>
+
+    <!-- Top Right Nav -->
+    <div class="hud-nav">
+        <a href="index.html" class="hud-btn"><i data-lucide="home"></i> Back to Main Portal</a>
+        <a href="workspace.html" class="hud-btn"><i data-lucide="binary"></i> Open AI Workspace</a>
+    </div>
+
+    <!-- Bottom Controls -->
+    <div class="hud-controls">
+        <button class="hud-btn" onclick="resetCameraView()"><i data-lucide="rotate-ccw"></i> Reset 3D View</button>
+        <button class="hud-btn" onclick="toggleAutoRotate()"><i data-lucide="play"></i> Auto Orbit</button>
+        <button class="hud-btn" onclick="focusPhase(0)"><i data-lucide="fast-forward"></i> Tour Phases</button>
+    </div>
+
+    <!-- Info Card -->
+    <div class="hud-info-card" id="infoCard">
+        <div class="phase-timeline" id="infoTimeline">Weeks 1 – 7 (Sep 2025)</div>
+        <h3 id="infoTitle">Phase 1: Research & Problem Formulation</h3>
+        <p id="infoDesc">Comprehensive literature review of generative algorithms (GANs, Diffusion models), benchmark dataset surveys, and mathematical problem definition.</p>
+        <span class="status-pill" id="infoStatus">COMPLETED</span>
+    </div>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        if (window.lucide) lucide.createIcons();
+    </script>
+
+    <!-- 3D Gantt Engine -->
+    <script>
+        const phasesData = [
+            {
+                id: 1,
+                title: "Phase 1: Research & Problem Formulation",
+                timeline: "Feb 2026 – Mar 2026 (2 Months)",
+                desc: "Literature review of GAN/Diffusion synthesis artifacts, feasibility study, architecture benchmarking, and FYP-1 proposal defense.",
+                color: 0x00f2fe,
+                startWeek: 1,
+                durationWeeks: 8,
+                deliverable: "FYP Proposal & Literature Baseline",
+                status: "SCHEDULED"
+            },
+            {
+                id: 2,
+                title: "Phase 2: Data Acquisition & Engineering",
+                timeline: "Apr 2026 – May 2026 (2 Months)",
+                desc: "Sourced ~139,000 images (CelebA, FFHQ, StyleGAN), automated data integrity validation, data augmentation, and 75/15/10 dataset splitting.",
+                color: 0x38bdf8,
+                startWeek: 9,
+                durationWeeks: 8,
+                deliverable: "Preprocessed DF-DATASET",
+                status: "SCHEDULED"
+            },
+            {
+                id: 3,
+                title: "Phase 3: EfficientNet-B0 Model & Forensics",
+                timeline: "Jun 2026 – Jul 2026 (2 Months)",
+                desc: "EfficientNet-B0 backbone fine-tuning, LayerNorm custom head integration for batch_size=1 stability, Laplacian variance & 2D FFT spectral cues.",
+                color: 0xa855f7,
+                startWeek: 17,
+                durationWeeks: 8,
+                deliverable: "deepfake_detector.pth (52.5 MB)",
+                status: "SCHEDULED"
+            },
+            {
+                id: 4,
+                title: "Phase 4: Flask REST API Microservice",
+                timeline: "Aug 2026 – Sep 2026 (2 Months)",
+                desc: "Flask microservice, CORS integration, 32MB payload security, multipart image ingestion, and inference latency optimization (<200ms CPU).",
+                color: 0xec4899,
+                startWeek: 25,
+                durationWeeks: 8,
+                deliverable: "Flask REST API (/detect, /health)",
+                status: "SCHEDULED"
+            },
+            {
+                id: 5,
+                title: "Phase 5: Frontend Glassmorphism Portal",
+                timeline: "Oct 2026 – Nov 2026 (2 Months)",
+                desc: "Dark Glassmorphism responsive UI, drag-and-drop file preview, animated scanning simulation, SVG radial confidence gauge, and EmailJS integration.",
+                color: 0x10b981,
+                startWeek: 33,
+                durationWeeks: 8,
+                deliverable: "Interactive Web Portal & Workspaces",
+                status: "SCHEDULED"
+            },
+            {
+                id: 6,
+                title: "Phase 6: Testing, Thesis & Final Defense",
+                timeline: "Dec 2026 (1 Month)",
+                desc: "End-to-end integration testing, inference speed benchmarking, final FYP project report, and thesis viva presentation defense.",
+                color: 0xf59e0b,
+                startWeek: 41,
+                durationWeeks: 4,
+                deliverable: "Final Thesis & Viva Defense",
+                status: "SCHEDULED"
+            }
+        ];
+
+        // Three.js Scene Setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x060913, 0.012);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        // OrbitControls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2.05;
+        controls.minDistance = 15;
+        controls.maxDistance = 120;
+
+        // Default Camera
+        function resetCameraView() {
+            new TWEEN.Tween(camera.position)
+                .to({ x: 35, y: 30, z: 45 }, 1200)
+                .easing(TWEEN.Easing.Cubic.Out)
+                .start();
+            new TWEEN.Tween(controls.target)
+                .to({ x: 15, y: 0, z: 0 }, 1200)
+                .easing(TWEEN.Easing.Cubic.Out)
+                .start();
+        }
+        camera.position.set(35, 30, 45);
+        controls.target.set(15, 0, 0);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0x00f2fe, 1.2);
+        dirLight.position.set(30, 50, 40);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+
+        const purpleLight = new THREE.PointLight(0xa855f7, 2, 80);
+        purpleLight.position.set(-10, 25, -10);
+        scene.add(purpleLight);
+
+        // 3D Grid Floor
+        const gridHelper = new THREE.GridHelper(90, 45, 0x00f2fe, 0x1e293b);
+        gridHelper.position.set(15, -2, 0);
+        scene.add(gridHelper);
+
+        // Timeline Base Rail (X-Axis)
+        const totalWeeks = 28;
+        const weekScale = 2.0; // Units per week
+
+        // Milestone Block Meshes
+        const phaseMeshes = [];
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        phasesData.forEach((phase, index) => {
+            const width = phase.durationWeeks * weekScale;
+            const height = 1.4;
+            const depth = 2.8;
+            
+            const geometry = new THREE.BoxGeometry(width, height, depth);
+            
+            // Glowing Chamfered Material
+            const material = new THREE.MeshStandardMaterial({
+                color: phase.color,
+                roughness: 0.2,
+                metalness: 0.8,
+                emissive: phase.color,
+                emissiveIntensity: 0.35,
+                transparent: true,
+                opacity: 0.92
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+            const posX = (phase.startWeek * weekScale) + (width / 2) - (weekScale * 2);
+            const posY = index * 1.6;
+            const posZ = (index - 2.5) * 4.2;
+
+            mesh.position.set(posX, posY, posZ);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            mesh.userData = phase;
+
+            scene.add(mesh);
+            phaseMeshes.push(mesh);
+
+            // Add Glowing Outline / Wireframe
+            const wireGeo = new THREE.EdgesGeometry(geometry);
+            const wireMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.6 });
+            const wireframe = new THREE.LineSegments(wireGeo, wireMat);
+            mesh.add(wireframe);
+
+            // Add Pillar Support to Floor
+            const pillarGeo = new THREE.CylinderGeometry(0.08, 0.08, posY + 2, 16);
+            const pillarMat = new THREE.MeshBasicMaterial({ color: 0x334155, transparent: true, opacity: 0.5 });
+            const pillar = new THREE.Mesh(pillarGeo, pillarMat);
+            pillar.position.set(posX, (posY - 2) / 2, posZ);
+            scene.add(pillar);
+        });
+
+        // Hover & Interaction
+        const tooltip = document.getElementById('tooltip');
+        let hoveredMesh = null;
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(phaseMeshes);
+
+            if (intersects.length > 0) {
+                const mesh = intersects[0].object;
+                if (hoveredMesh !== mesh) {
+                    if (hoveredMesh) hoveredMesh.material.emissiveIntensity = 0.35;
+                    hoveredMesh = mesh;
+                    hoveredMesh.material.emissiveIntensity = 0.85;
+                }
+                
+                tooltip.style.display = 'block';
+                tooltip.style.left = `${e.clientX + 16}px`;
+                tooltip.style.top = `${e.clientY + 16}px`;
+                tooltip.innerHTML = `<strong>${mesh.userData.title}</strong><br><span style="color:#38bdf8">${mesh.userData.timeline}</span>`;
+                document.body.style.cursor = 'pointer';
+            } else {
+                if (hoveredMesh) {
+                    hoveredMesh.material.emissiveIntensity = 0.35;
+                    hoveredMesh = null;
+                }
+                tooltip.style.display = 'none';
+                document.body.style.cursor = 'default';
+            }
+        });
+
+        // Click to Focus on Phase
+        window.addEventListener('click', () => {
+            if (hoveredMesh) {
+                updateInfoCard(hoveredMesh.userData);
+                focusMesh(hoveredMesh);
+            }
+        });
+
+        function updateInfoCard(phase) {
+            document.getElementById('infoTitle').innerText = phase.title;
+            document.getElementById('infoTimeline').innerText = phase.timeline;
+            document.getElementById('infoDesc').innerText = phase.desc;
+            document.getElementById('infoStatus').innerText = phase.status;
+        }
+
+        function focusMesh(mesh) {
+            new TWEEN.Tween(camera.position)
+                .to({ x: mesh.position.x + 10, y: mesh.position.y + 8, z: mesh.position.z + 18 }, 1000)
+                .easing(TWEEN.Easing.Cubic.Out)
+                .start();
+            new TWEEN.Tween(controls.target)
+                .to({ x: mesh.position.x, y: mesh.position.y, z: mesh.position.z }, 1000)
+                .easing(TWEEN.Easing.Cubic.Out)
+                .start();
+        }
+
+        let currentTourIdx = 0;
+        function focusPhase(idx) {
+            currentTourIdx = (idx !== undefined) ? idx : (currentTourIdx + 1) % phasesData.length;
+            const targetMesh = phaseMeshes[currentTourIdx];
+            updateInfoCard(targetMesh.userData);
+            focusMesh(targetMesh);
+        }
+
+        let autoRotate = false;
+        function toggleAutoRotate() {
+            autoRotate = !autoRotate;
+            controls.autoRotate = autoRotate;
+            controls.autoRotateSpeed = 1.2;
+        }
+
+        // Window Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Animation Loop
+        function animate(time) {
+            requestAnimationFrame(animate);
+            TWEEN.update();
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>

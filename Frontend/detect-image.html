@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Workspace - DeepfakeDetection</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Outfit:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Premium Navigation Bar -->
+    <nav class="navbar" id="mainNav">
+        <div class="logo-container">
+            <img src="image/logo.png" alt="DeepFake Logo" onerror="this.src='https://img.icons8.com/nolan/96/artificial-intelligence.png'">
+            <div class="logo-text">DeepfakeDetection</div>
+        </div>
+        <div class="burger" onclick="toggleMenu()">
+            <div></div><div></div><div></div>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="workspace.html" class="active">Workspace</a>
+            <a href="about.html">About</a>
+            <a href="faq.html">FAQ</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Main Workspace Section -->
+    <section class="detect-section">
+        <div class="detect-card glass-card reveal-on-scroll">
+            <h2>🔍 AI Analysis Workspace</h2>
+            <p>Upload, drop or drag an image containing a face to run neural detection.</p>
+
+            <!-- Drag & Drop Area -->
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)">
+                <div class="upload-icon">
+                    <i data-lucide="cloud-upload" style="width: 48px; height: 48px;"></i>
+                </div>
+                <p>Click or drag image here to scan</p>
+                <span>PNG, JPG, JPEG, WEBP up to 10MB</span>
+            </div>
+
+            <!-- Scanner preview box -->
+            <div id="preview-container">
+                <div class="scanner-overlay">
+                    <div class="scanner-corner-tr"></div>
+                    <div class="scanner-corner-bl"></div>
+                </div>
+                <img id="preview-img" src="" alt="Preview">
+                <div class="scanner-line" id="scannerLine"></div>
+            </div>
+
+            <!-- Simulation AI Scan progress logs -->
+            <div class="analysis-progress-container" id="progress-container">
+                <div class="progress-header">
+                    <span>AI NEURAL ENGINE RUNNING</span>
+                    <span>PROCESSING</span>
+                </div>
+                <div class="mini-bar-bg">
+                    <div class="mini-bar-fill" id="miniBarFill"></div>
+                </div>
+                <div class="analysis-log">
+                    <div class="log-entry">
+                        <span class="log-icon"></span>Connecting to DeepfakeDetection AI core...
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-icon"></span>Running face geometric alignment...
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-icon"></span>Scanning high-frequency pixels...
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-icon"></span>Running EfficientNet inference...
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-icon"></span>Compiling visual analytics report...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analyse button -->
+            <button class="btn-primary" id="detectBtn" onclick="detectDeepFake()" style="width: 100%; justify-content: center; margin-bottom: 25px;">
+                <i data-lucide="binary"></i> Start AI Analysis
+            </button>
+
+            <!-- Results container -->
+            <div id="result-container">
+                <!-- Large Status Header (Real/Fake Indicator) -->
+                <div class="result-card-header" id="resultHeader">
+                    <div class="radial-meter">
+                        <svg width="150" height="150" viewBox="0 0 160 160">
+                            <circle class="radial-bg" cx="80" cy="80" r="70"/>
+                            <circle class="radial-progress" id="radialProgress" cx="80" cy="80" r="70"/>
+                        </svg>
+                        <div class="radial-text">
+                            <div class="radial-percent" id="radialPercent">0%</div>
+                            <div class="radial-label" id="radialLabel">CONFIDENCE</div>
+                        </div>
+                    </div>
+                    <div class="result-badge" id="resultBadge">ANALYZED</div>
+                    <div class="result-description" id="resultDesc">Processing...</div>
+                </div>
+
+                <!-- Probability Bar Chart Compare -->
+                <div class="bars-container">
+                    <div class="bar-row">
+                        <div class="bar-labels">
+                            <span class="bar-label-title">Authentic Probability</span>
+                            <span class="bar-label-value real" id="barRealVal">0%</span>
+                        </div>
+                        <div class="bar-bg">
+                            <div class="bar-fill real" id="barRealFill"></div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-labels">
+                            <span class="bar-label-title">Manipulated Probability</span>
+                            <span class="bar-label-value fake" id="barFakeVal">0%</span>
+                        </div>
+                        <div class="bar-bg">
+                            <div class="bar-fill fake" id="barFakeFill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI diagnostics findings list -->
+                <div class="diagnostic-card">
+                    <h4><i data-lucide="terminal"></i> Dynamic AI Diagnostics</h4>
+                    <ul id="diagnosticList">
+                        <li>Evaluating pixel consistency metrics...</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Premium Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 <strong>DeepfakeDetection</strong>. All Rights Reserved. ❤️</p>
+            <p>Empowering digital networks with high-fidelity deepfake analysis.</p>
+        </div>
+    </footer>
+
+        <!-- Lucide Icons & Javascript -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        function initLucide() {
+            if (window.lucide && typeof lucide.createIcons === 'function') {
+                lucide.createIcons();
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initLucide);
+        } else {
+            initLucide();
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

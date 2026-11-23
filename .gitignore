@@ -1,0 +1,30 @@
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+
+# Dataset & local data (4.39 GB Cleaned dataset + splits/reports)
+backend/DF-DATASET/
+dataset_count.py/
+validation_report.txt
+
+# Audit reports & Kaggle packaging
+audit_reports/
+kaggle_package/
+kaggle_package.zip
+
+# Model checkpoints: ignore old/backup/training models, keep ONLY the 16.8 MB inference checkpoint
+backend/model/*.pth
+backend/model/experiments/*
+!backend/model/experiments/
+!backend/model/experiments/efficientnet_b0_new_best_inference.pth
+
+# IDE & OS metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

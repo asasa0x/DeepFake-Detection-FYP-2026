@@ -1,0 +1,11 @@
+# Deepfake Detection Backend Dependencies (Render CPU Deployment Ready)
+--extra-index-url https://download.pytorch.org/whl/cpu
+Flask>=3.0.0
+flask-cors>=4.0.0
+gunicorn>=21.2.0
+torch>=2.0.0
+torchvision>=0.15.0
+pillow>=10.0.0
+numpy>=1.24.0
+tqdm>=4.65.0
+werkzeug>=3.0.0

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepfakeDetection - AI Authenticity Shield</title>
+    <meta name="description" content="Advanced AI-powered deepfake detection platform using EfficientNet-B0 to identify synthesized face manipulations in real-time with 99.2% accuracy.">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Outfit:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        html { scroll-behavior: smooth; }
+
+        /* ── Hero extra glow ─────────────────────────────── */
+        .hero-badge i {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ── 4-metric panel override ─────────────────────── */
+        .metrics-panel {
+            grid-template-columns: repeat(4, 1fr);
+            display: grid;
+            gap: 20px;
+        }
+
+        /* ── How It Works mini ───────────────────────────── */
+        .hiw-mini {
+            padding: 80px 45px;
+            text-align: center;
+        }
+
+        .hiw-mini h2 {
+            font-size: 34px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ffffff, #a5b4fc, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hiw-mini > p {
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 50px;
+        }
+
+        .hiw-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hiw-mini-card {
+            background: rgba(13, 20, 32, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 18px;
+            padding: 36px 24px;
+            text-align: center;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hiw-mini-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+        }
+
+        .hiw-mini-card:hover {
+            border-color: rgba(0, 242, 254, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 242, 254, 0.08);
+        }
+
+        .hiw-mini-num {
+            font-family: var(--font-tech);
+            font-size: 13px;
+            color: rgba(0, 242, 254, 0.55);
+            letter-spacing: 3px;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+        }
+
+        .hiw-mini-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 16px;
+            background: rgba(0, 242, 254, 0.06);
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-cyan);
+            margin: 0 auto 18px;
+            transition: var(--transition-smooth);
+        }
+
+        .hiw-mini-icon svg { width: 24px; height: 24px; }
+
+        .hiw-mini-card:hover .hiw-mini-icon {
+            background: var(--accent-gradient);
+            color: #06090e;
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(0, 242, 254, 0.3);
+        }
+
+        .hiw-mini-card h3 {
+            font-size: 17px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .hiw-mini-card p {
+            font-size: 13.5px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .hiw-arrow {
+            position: absolute;
+            top: 50%;
+            right: -16px;
+            transform: translateY(-50%);
+            color: rgba(0, 242, 254, 0.3);
+            font-size: 20px;
+            z-index: 2;
+        }
+
+        .hiw-mini-card { position: relative; }
+        .hiw-mini-card:last-child .hiw-arrow { display: none; }
+
+        /* ── Section divider ─────────────────────────────── */
+        .section-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,242,254,0.12), transparent);
+            margin: 0 auto;
+        }
+
+        /* ── CTA strip ───────────────────────────────────── */
+        .cta-strip {
+            padding: 80px 45px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(127,0,255,0.06) 0%, transparent 70%);
+        }
+
+        .cta-strip h2 {
+            font-size: 36px;
+            color: #ffffff;
+            margin-bottom: 14px;
+        }
+
+        .cta-strip p {
+            color: #94a3b8;
+            font-size: 16px;
+            margin-bottom: 36px;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-strip .btn-primary {
+            font-size: 17px;
+            padding: 18px 48px;
+        }
+
+        /* ── Responsive ──────────────────────────────────── */
+        @media (max-width: 900px) {
+            .hiw-mini-grid { grid-template-columns: 1fr; gap: 16px; }
+            .metrics-panel { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .features-container { grid-template-columns: 1fr; }
+            .metrics-panel { grid-template-columns: 1fr 1fr; }
+            .hiw-mini { padding: 60px 20px; }
+            .cta-strip { padding: 60px 20px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Premium Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="image/logo.png" alt="DeepFake Logo"
+                onerror="this.src='https://img.icons8.com/nolan/96/artificial-intelligence.png'">
+            <div class="logo-text">DeepFakeDetection</div>
+        </div>
+        <div class="burger" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html" class="active">Home</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="workspace.html">Workspace</a>
+            <a href="about.html">About</a>
+            <a href="faq.html">FAQ</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <!-- ══════════════ HERO SECTION ══════════════ -->
+    <header class="hero">
+        <div class="hero-glow-sphere"></div>
+        <div class="hero-badge">
+            <i data-lucide="shield-check"></i> Next-Gen AI Authentication
+        </div>
+        <h1>Guard Digital Integrity with DeepfakeDetection</h1>
+        <p>
+            An advanced, deep neural network-powered platform designed to identify synthesized face
+            manipulations in real-time. Uncover digital tampering, pixel anomalies, and facial landmark
+            inconsistencies in under 1.5 seconds.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div style="display: flex; gap: 15px; justify-content: center; z-index: 10; flex-wrap: wrap;">
+            <a href="detect-image.html" class="btn-primary">
+                Launch Workspace <i data-lucide="arrow-right"></i>
+            </a>
+            <a href="about.html" class="btn-secondary">Explore Platform</a>
+        </div>
+
+        <!-- 4-Metric Counters Panel -->
+        <div class="metrics-panel reveal-on-scroll">
+            <div class="metric-item glass-card">
+                <div class="metric-number">99.2%</div>
+                <div class="metric-label">Model Accuracy</div>
+            </div>
+            <div class="metric-item glass-card">
+                <div class="metric-number">1.5s</div>
+                <div class="metric-label">Scan Speed</div>
+            </div>
+            <div class="metric-item glass-card">
+                <div class="metric-number">4-Class</div>
+                <div class="metric-label">Detection Types</div>
+            </div>
+            <div class="metric-item glass-card">
+                <div class="metric-number">16.3MB</div>
+                <div class="metric-label">Model Footprint</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="section-divider"></div>
+
+    <!-- ══════════════ KEY FEATURES SECTION ══════════════ -->
+    <section id="features" class="features-section">
+        <h2 class="reveal-on-scroll">Supercharged AI Capabilities</h2>
+        <p class="reveal-on-scroll">
+            Powered by state-of-the-art EfficientNet-B0 trained on a 4-class facial forensics dataset.
+        </p>
+
+        <div class="features-container">
+            <div class="feature-card glass-card reveal-on-scroll">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="scan"></i>
+                </div>
+                <h3>EfficientNet-B0 Backbone</h3>
+                <p>Custom EfficientNet-B0 with compound scaling — simultaneously balances depth, width, and resolution for sub-100ms tensor inference on standard CPU hardware.</p>
+            </div>
+            <div class="feature-card glass-card reveal-on-scroll">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="zap"></i>
+                </div>
+                <h3>Instant Diagnostic Reports</h3>
+                <p>Generates confidence ratings, split-probability charts, and forensic pixel anomaly logs dynamically for every scan — in under 1.5 seconds end-to-end.</p>
+            </div>
+            <div class="feature-card glass-card reveal-on-scroll">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="lock"></i>
+                </div>
+                <h3>100% Biometric Privacy</h3>
+                <p>Your uploaded media is processed entirely in ephemeral memory and deleted immediately via <code style="color:var(--accent-cyan);font-size:12px;">os.remove()</code> — zero persistent biometric storage.</p>
+            </div>
+            <div class="feature-card glass-card reveal-on-scroll">
+                <div class="feature-icon-wrapper">
+                    <i data-lucide="layers"></i>
+                </div>
+                <h3>4-Class Forensic Resilience</h3>
+                <p>Trained against four adversarial classes: Real portraits, AI-generated synthetic faces, cartoon images, and procedurally manipulated deepfakes (splice, warp, filter).</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ══════════════ HOW IT WORKS MINI ══════════════ -->
+    <section class="hiw-mini">
+        <div class="hiw-badge-inline reveal-on-scroll" style="display:inline-flex;align-items:center;gap:8px;background:rgba(127,0,255,0.08);border:1px solid rgba(127,0,255,0.25);color:#a78bfa;border-radius:50px;padding:7px 18px;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;">
+            <i data-lucide="cpu" style="width:14px;height:14px;"></i> Neural Processing Pipeline
+        </div>
+        <h2 class="reveal-on-scroll">How It Works</h2>
+        <p class="reveal-on-scroll">From a single image upload to a full AI-powered authenticity verdict — in under 2 seconds.</p>
+
+        <div class="hiw-mini-grid">
+            <div class="hiw-mini-card reveal-on-scroll">
+                <div class="hiw-mini-num">Step 01</div>
+                <div class="hiw-mini-icon">
+                    <i data-lucide="upload-cloud"></i>
+                </div>
+                <h3>Upload Image</h3>
+                <p>Drag & drop or click to select any face image. PNG, JPG, JPEG or WEBP up to 10MB supported.</p>
+                <span class="hiw-arrow">→</span>
+            </div>
+            <div class="hiw-mini-card reveal-on-scroll">
+                <div class="hiw-mini-num">Step 02</div>
+                <div class="hiw-mini-icon">
+                    <i data-lucide="scan-face"></i>
+                </div>
+                <h3>EfficientNet AI Scan</h3>
+                <p>The model pre-processes to 224×224, runs a forward tensor pass, and applies Softmax probability scoring.</p>
+                <span class="hiw-arrow">→</span>
+            </div>
+            <div class="hiw-mini-card reveal-on-scroll">
+                <div class="hiw-mini-num">Step 03</div>
+                <div class="hiw-mini-icon">
+                    <i data-lucide="shield-check"></i>
+                </div>
+                <h3>Verdict & Report</h3>
+                <p>Receive an AUTHENTIC or MANIPULATED verdict with confidence score, probability bars, and forensic diagnostics.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ══════════════ CTA STRIP ══════════════ -->
+    <section class="cta-strip">
+        <h2 class="reveal-on-scroll">Ready to Verify Your Media?</h2>
+        <p class="reveal-on-scroll">
+            Upload any face image and let our EfficientNet-B0 AI deliver a forensic authenticity verdict in seconds — completely free.
+        </p>
+        <a href="detect-image.html" class="btn-primary reveal-on-scroll">
+            <i data-lucide="binary"></i> Launch AI Workspace
+        </a>
+    </section>
+
+    <!-- Premium Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 <strong>DeepFakeDetection</strong>. All Rights Reserved.</p>
+            <p>Empowering digital networks with high-fidelity deepfake analysis.</p>
+        </div>
+    </footer>
+
+        <!-- Lucide Icons & Javascript -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        function initLucide() {
+            if (window.lucide && typeof lucide.createIcons === 'function') {
+                lucide.createIcons();
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initLucide);
+        } else {
+            initLucide();
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
